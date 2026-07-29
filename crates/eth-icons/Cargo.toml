@@ -1,0 +1,11 @@
+[package]
+name = "eth-icons"
+description = "Retrieve ethereum icons"
+license = "LGPL-3.0"
+documentation = "https://github.com/v3xlabs/eth-icons"
+repository = "https://github.com/v3xlabs/eth-icons"
+hompage = "https://github.com/v3xlabs/eth-icons"
+version = "0.0.1"
+edition = "2024"
+
+[dependencies]
