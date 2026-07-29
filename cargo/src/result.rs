@@ -1,4 +1,4 @@
-use crate::{Error, Icon, IconQuery};
+use crate::{Error, Icon};
 
 #[derive(Debug, Clone)]
 pub enum IconResult {

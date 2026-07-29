@@ -2,6 +2,7 @@
  * `eth-icons` is an icon fetching library for EVM icons.
  *
  * Network (Mainnet, Sepolia, etc.), Native Asset (ETH, sepETH, etc.), and ERC20 (wETH, etc.) icons are an inherit non-standardized extension of the ethereum protocol.
+ *
  * To allow for easily integrating these into your application eth-icons aims to bring a set of helpers to obtain iconography from various sources.
  *
  * ```rust
@@ -9,12 +10,17 @@
  *
  * #[tokio::main]
  * pub async fn main() {
- *     let icons = IconClient::default();
- *     let resolution = icons.resolve(IconQuery::Network(1)).await;
+ *   // Create a client
+ *   let client = reqwest::Client::new();
  *
- *     if let Some(icon) = resolution.found() {
- *         println!("{}", icon);
- *     }
+ *   // Create an icon client
+ *   let icons = IconClient::builder()
+ *     .with_reqwest(client)
+ *     .with_defaults()
+ *     .build();
+ *
+ *   let weth = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2".to_string();
+ *   let weth_icons = icons.resolve(IconQuery::ERC20(1u64, weth)).await;
  * }
  * ```
  *
@@ -23,7 +29,7 @@
  * Every source is opt-in by default.
  *
  * ```rust
- * use eth_icons::{Address, Blockscout, IconClient, IconQuery, Zerion};
+ * use eth_icons::{Address, IconClient, IconQuery, modules::{Blockscout, Zerion}};
  *
  * #[tokio::main]
  * pub async fn main() {
@@ -33,14 +39,24 @@
  *         .with_source(Zerion)
  *         .build();
  *
- *     let weth = Address("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2".to_string());
- *     let resolution = icons.resolve(IconQuery::ERC20(1, weth)).await;
+ *     let weth = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2".to_string();
+ *     let results = icons.resolve(IconQuery::ERC20(1, weth)).await;
  *
- *     for source in &resolution.sources {
+ *     for source in &results {
  *         println!("{}: {:?}", source.source, source.result);
  *     }
  * }
  * ```
+ *
+ * ## Available Sources
+ *
+ * - [Avara](crate::modules::Avara) - supports ERC20s
+ * - [Blockscout](crate::modules::Blockscout) - supports ERC20s
+ * - [SafeWallet](crate::modules::SafeWallet) - supports network and native token icons
+ * - [Smoldapp](crate::modules::Smoldapp) - supports network, native tokens, and ERC20s
+ * - [Zerion](crate::modules::Zerion) - supports ERC20s
+ *
+ *
  */
 
 pub mod client;
