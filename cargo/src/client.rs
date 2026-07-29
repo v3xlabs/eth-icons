@@ -1,6 +1,6 @@
 use reqwest::Client;
 
-use crate::{Error, Icon};
+use crate::{Error, Icon, discovery::DiscoveryResult};
 
 pub struct IconClient {
     pub client: Client,
@@ -11,31 +11,30 @@ impl IconClient {
         Self { client }
     }
 
-    pub async fn fetch_image_url(&self, url: &str) -> Result<Icon, Error> {
+    pub async fn fetch_image_url(&self, url: &str) -> Result<DiscoveryResult, Error> {
         let response = self
             .client
             .get(url)
             .send()
-            .await
-            .map_err(Error::HttpError)?;
-        let status = response.status();
+            .await?;
 
-        if !status.is_success() {
-            return Err(Error::HttpError(response.error_for_status().unwrap_err()));
+        if response.status() == reqwest::StatusCode::NOT_FOUND {
+            return Ok(DiscoveryResult::NotFound);
         }
+
+        let response = response.error_for_status()?;
 
         let mime_type = response
             .headers()
             .get("content-type")
-            .map(|h| h.to_str().unwrap_or("image/png"))
-            .unwrap_or("image/png")
-            .to_string();
-        let body = response.bytes().await.map_err(Error::HttpError)?;
+            .and_then(|x| x.to_str().ok().map(|x| x.to_string()));
+        let body = response.bytes().await?;
+
         let icon = Icon {
             bytes: body,
             mime_type,
         };
 
-        Ok(icon)
+        Ok(icon.into())
     }
 }

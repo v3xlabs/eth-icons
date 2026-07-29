@@ -1,7 +1,6 @@
 use crate::{
-    IconClient,
+    Error, IconClient, IconQuery,
     discovery::{DiscoveryMechanism, DiscoveryResult},
-    Error, IconQuery,
 };
 
 /// https://tokens.smold.app/ethereum
@@ -28,18 +27,11 @@ impl DiscoveryMechanism for Smoldapp {
         }
     }
 
-    async fn fetch(
-        &self,
-        client: &IconClient,
-        query: IconQuery,
-    ) -> Result<Option<DiscoveryResult>, Error> {
-        let url = self.url(&query).ok_or(Error::Unsupported)?;
+    async fn fetch(&self, client: &IconClient, query: IconQuery) -> Result<DiscoveryResult, Error> {
+        let Some(url) = self.url(&query) else {
+            return Ok(DiscoveryResult::Unsupported);
+        };
 
-        let icon = client.fetch_image_url(&url).await?;
-
-        Ok(Some(DiscoveryResult {
-            icon: Some(icon),
-            metadata: None,
-        }))
+        client.fetch_image_url(&url).await
     }
 }

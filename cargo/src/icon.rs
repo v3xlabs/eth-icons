@@ -5,7 +5,7 @@ use bytes::Bytes;
 #[derive(Clone, PartialEq, Eq, Hash)]
 pub struct Icon {
     pub bytes: Bytes,
-    pub mime_type: String,
+    pub mime_type: Option<String>,
 }
 
 impl Display for Icon {
@@ -14,7 +14,7 @@ impl Display for Icon {
             f,
             "Icon(size: {:?}, mime_type: {})",
             self.bytes.len(),
-            self.mime_type
+            self.mime_type.as_ref().unwrap_or(&"unknown".to_string())
         )
     }
 }
@@ -25,7 +25,7 @@ impl Debug for Icon {
             f,
             "Icon(size: {:?}, mime_type: {})",
             self.bytes.len(),
-            self.mime_type
+            self.mime_type.as_ref().unwrap_or(&"unknown".to_string())
         )
     }
 }

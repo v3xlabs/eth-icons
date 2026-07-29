@@ -25,12 +25,10 @@ impl DiscoveryMechanism for Blockscout {
         }
     }
 
-    async fn fetch(
-        &self,
-        client: &IconClient,
-        query: IconQuery,
-    ) -> Result<Option<DiscoveryResult>, Error> {
-        let url = self.url(&query).ok_or(Error::Unsupported)?;
+    async fn fetch(&self, client: &IconClient, query: IconQuery) -> Result<DiscoveryResult, Error> {
+        let Some(url) = self.url(&query) else {
+            return Ok(DiscoveryResult::Unsupported);
+        };
 
         let response = client
             .client
@@ -41,21 +39,15 @@ impl DiscoveryMechanism for Blockscout {
 
         let status = response.status();
         if !status.is_success() {
-            return Err(Error::HttpError(
-                response.error_for_status().unwrap_err(),
-            ));
+            return Err(Error::HttpError(response.error_for_status().unwrap_err()));
         }
 
-        let body: BlockscoutAssetMetadata =
-            response.json().await.map_err(Error::HttpError)?;
-        let icon_url = body.icon_url.ok_or(Error::NotFound)?;
+        let body: BlockscoutAssetMetadata = response.json().await.map_err(Error::HttpError)?;
+        let Some(icon_url) = body.icon_url else {
+            return Ok(DiscoveryResult::NotFound);
+        };
 
-        let icon = client.fetch_image_url(&icon_url).await?;
-
-        Ok(Some(DiscoveryResult {
-            icon: Some(icon),
-            metadata: None,
-        }))
+        client.fetch_image_url(&icon_url).await
     }
 }
 

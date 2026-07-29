@@ -16,21 +16,31 @@ pub enum IconQuery {
 }
 
 #[derive(Debug, Clone)]
-pub struct DiscoveryResults {
-    pub query: IconQuery,
-    pub results: Vec<DiscoveryResult>,
+pub enum DiscoveryResult {
+    Found(Icon),
+    NotFound,
+    Unsupported,
+}
+
+impl From<Icon> for DiscoveryResult {
+    fn from(icon: Icon) -> Self {
+        DiscoveryResult::Found(icon)
+    }
+}
+
+impl From<Option<Icon>> for DiscoveryResult {
+    fn from(icon: Option<Icon>) -> Self {
+        match icon {
+            Some(icon) => DiscoveryResult::Found(icon),
+            None => DiscoveryResult::NotFound,
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
-pub struct DiscoveryResult {
-    pub icon: Option<Icon>,
-    pub metadata: Option<String>,
-}
-
-impl DiscoveryResult {
-    pub fn is_empty(&self) -> bool {
-        self.icon.is_none() && self.metadata.is_none()
-    }
+pub struct DiscoveryResults {
+    pub query: IconQuery,
+    pub results: Vec<DiscoveryResult>,
 }
 
 pub trait DiscoveryMechanism {
@@ -40,5 +50,5 @@ pub trait DiscoveryMechanism {
         &self,
         client: &IconClient,
         query: IconQuery,
-    ) -> impl std::future::Future<Output = Result<Option<DiscoveryResult>, Error>> + Send;
+    ) -> impl std::future::Future<Output = Result<DiscoveryResult, Error>> + Send;
 }
