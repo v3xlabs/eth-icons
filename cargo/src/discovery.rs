@@ -1,5 +1,6 @@
 use crate::identity::{NetworkId, Address};
 
+#[derive(Debug, Clone)]
 pub enum DiscoveryQuery {
     // Ethereum Mainnet, Sepolia, etc.
     Network(NetworkId),
@@ -9,14 +10,16 @@ pub enum DiscoveryQuery {
     ERC20(NetworkId, Address),
 }
 
+#[derive(Debug, Clone)]
 pub struct DiscoveryResults {
-    query: DiscoveryQuery,
-    results: Vec<DiscoveryResult>
+    pub query: DiscoveryQuery,
+    pub results: Vec<DiscoveryResult>
 }
 
+#[derive(Debug, Clone)]
 pub struct DiscoveryResult {
-    icon: Option<String>,
-    metadata: Option<String>
+    pub icon: Option<String>,
+    pub metadata: Option<String>
 }
 
 impl DiscoveryResult {
@@ -25,6 +28,16 @@ impl DiscoveryResult {
     }
 }
 
+#[derive(Debug, thiserror::Error)]
+pub enum DiscoveryError {
+    #[error("Not found")]
+    NotFound,
+    #[error("HTTP error: {0}")]
+    HttpError(reqwest::Error),
+    #[error("Internal error: {0}")]
+    InternalError(String),
+}
+
 pub trait DiscoveryMechanism {
-    async fn discover(&self, query: DiscoveryQuery) -> DiscoveryResults;
+    fn discover(&self, query: DiscoveryQuery) -> impl std::future::Future<Output = Result<Option<DiscoveryResult>, DiscoveryError>> + Send;
 }

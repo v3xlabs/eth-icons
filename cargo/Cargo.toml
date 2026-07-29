@@ -4,8 +4,12 @@ description = "Retrieve ethereum icons"
 license = "LGPL-3.0"
 documentation = "https://github.com/v3xlabs/eth-icons"
 repository = "https://github.com/v3xlabs/eth-icons"
-hompage = "https://github.com/v3xlabs/eth-icons"
 version = "0.0.1"
 edition = "2024"
 
 [dependencies]
+reqwest = "0.13"
+thiserror = "2.0"
+
+[dev-dependencies]
+tokio = { version = "1.40", features = ["full"] }
