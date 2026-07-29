@@ -50,7 +50,7 @@ impl DiscoveryMechanism for Blockscout {
             response.json().await.map_err(Error::HttpError)?;
         let icon_url = body.icon_url.ok_or(Error::NotFound)?;
 
-        let icon = client.fetch(&icon_url).await?;
+        let icon = client.fetch_image_url(&icon_url).await?;
 
         Ok(Some(DiscoveryResult {
             icon: Some(icon),

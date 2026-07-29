@@ -27,7 +27,7 @@ impl DiscoveryMechanism for SafeWallet {
     ) -> Result<Option<DiscoveryResult>, Error> {
         let url = self.url(&query).ok_or(Error::Unsupported)?;
 
-        let icon = client.fetch(&url).await?;
+        let icon = client.fetch_image_url(&url).await?;
 
         Ok(Some(DiscoveryResult {
             icon: Some(icon),

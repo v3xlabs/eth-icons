@@ -11,7 +11,7 @@ impl IconClient {
         Self { client }
     }
 
-    pub async fn fetch(&self, url: &str) -> Result<Icon, Error> {
+    pub async fn fetch_image_url(&self, url: &str) -> Result<Icon, Error> {
         let response = self
             .client
             .get(url)
