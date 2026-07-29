@@ -1,11 +1,8 @@
-use crate::{
-    Error, IconClient, IconQuery,
-    discovery::{DiscoveryMechanism, DiscoveryResult},
-};
+use crate::{Error, IconClient, IconQuery, IconResult, IconSource};
 
 pub struct Avara;
 
-impl DiscoveryMechanism for Avara {
+impl IconSource for Avara {
     fn url(&self, query: &IconQuery) -> Option<String> {
         match query {
             IconQuery::ERC20(network_id, address) => Some(format!(
@@ -17,9 +14,9 @@ impl DiscoveryMechanism for Avara {
         }
     }
 
-    async fn fetch(&self, client: &IconClient, query: IconQuery) -> Result<DiscoveryResult, Error> {
+    async fn fetch(&self, client: &IconClient, query: IconQuery) -> Result<IconResult, Error> {
         let Some(url) = self.url(&query) else {
-            return Ok(DiscoveryResult::Unsupported);
+            return Ok(IconResult::Unsupported);
         };
 
         client.fetch_image_url(&url).await

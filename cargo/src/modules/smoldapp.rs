@@ -1,12 +1,9 @@
-use crate::{
-    Error, IconClient, IconQuery,
-    discovery::{DiscoveryMechanism, DiscoveryResult},
-};
+use crate::{Error, IconClient, IconQuery, IconResult, IconSource};
 
 /// https://tokens.smold.app/ethereum
 pub struct Smoldapp;
 
-impl DiscoveryMechanism for Smoldapp {
+impl IconSource for Smoldapp {
     fn url(&self, query: &IconQuery) -> Option<String> {
         match query {
             IconQuery::Network(network_id) => Some(format!(
@@ -27,9 +24,9 @@ impl DiscoveryMechanism for Smoldapp {
         }
     }
 
-    async fn fetch(&self, client: &IconClient, query: IconQuery) -> Result<DiscoveryResult, Error> {
+    async fn fetch(&self, client: &IconClient, query: IconQuery) -> Result<IconResult, Error> {
         let Some(url) = self.url(&query) else {
-            return Ok(DiscoveryResult::Unsupported);
+            return Ok(IconResult::Unsupported);
         };
 
         client.fetch_image_url(&url).await

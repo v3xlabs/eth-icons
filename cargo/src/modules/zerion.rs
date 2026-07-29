@@ -1,11 +1,8 @@
-use crate::{
-    IconClient, Error, IconQuery,
-    discovery::{DiscoveryMechanism, DiscoveryResult},
-};
+use crate::{Error, IconClient, IconQuery, IconResult, IconSource};
 
 pub struct Zerion;
 
-impl DiscoveryMechanism for Zerion {
+impl IconSource for Zerion {
     fn url(&self, query: &IconQuery) -> Option<String> {
         match query {
             IconQuery::ERC20(_network_id, address) => Some(format!(
@@ -16,13 +13,9 @@ impl DiscoveryMechanism for Zerion {
         }
     }
 
-    async fn fetch(
-        &self,
-        client: &IconClient,
-        query: IconQuery,
-    ) -> Result<DiscoveryResult, Error> {
+    async fn fetch(&self, client: &IconClient, query: IconQuery) -> Result<IconResult, Error> {
         let Some(url) = self.url(&query) else {
-            return Ok(DiscoveryResult::Unsupported);
+            return Ok(IconResult::Unsupported);
         };
 
         client.fetch_image_url(&url).await
