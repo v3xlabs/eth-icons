@@ -1,20 +1,62 @@
 {
   "name": "eth-icons",
-  "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "version": "0.0.2",
+  "description": "Fetch Ethereum network, native asset, and ERC20 icons from various sources.",
+  "keywords": [
+    "ethereum",
+    "evm",
+    "icons",
+    "erc20",
+    "token",
+    "logo"
+  ],
+  "homepage": "https://github.com/v3xlabs/eth-icons",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/v3xlabs/eth-icons.git",
+    "directory": "typescript"
   },
-  "keywords": [],
-  "author": "v3xlabs",
   "license": "LGPL-3.0-only",
+  "author": "v3xlabs",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsdown",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "eslint": "^10.8.0",
+    "eslint-plugin-v3xlabs": "^1.8.1",
+    "tsdown": "^0.22.14",
+    "typescript": "^6.0.3"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
       "version": "^11.17.0",
       "onFail": "download"
     }
-  },
-  "type": "module"
+  }
 }

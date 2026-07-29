@@ -1,5 +1,9 @@
-import { IconSource } from "../client";
+import type { IconSource } from "../source";
 
 export const avara: IconSource = {
-    url: query => query.type == 'erc20-icon' ? `https://token-logos.family.co/asset?id=${query.networkId}:${query.assetId}` : undefined
+  name: "avara",
+  url: query =>
+    (query.type === "erc20"
+      ? `https://token-logos.family.co/asset?id=${query.networkId}:${query.address.toLowerCase()}`
+      : undefined),
 };

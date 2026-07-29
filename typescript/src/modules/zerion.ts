@@ -1,5 +1,9 @@
-import { IconSource } from "../client";
+import type { IconSource } from "../source";
 
-export const safewallet: IconSource = {
-    url: query => (query.type == 'erc20-icon') ? `https://cdn.zerion.io/${query.assetId}.png` : undefined,
+export const zerion: IconSource = {
+  name: "zerion",
+  url: query =>
+    (query.type === "erc20"
+      ? `https://cdn.zerion.io/${query.address.toLowerCase()}.png`
+      : undefined),
 };
