@@ -1,4 +1,4 @@
-use crate::{Icon, IconQuery};
+use crate::{Error, Icon, IconQuery};
 
 #[derive(Debug, Clone)]
 pub enum IconResult {
@@ -22,8 +22,8 @@ impl From<Option<Icon>> for IconResult {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct Results {
-    pub query: IconQuery,
-    pub results: Vec<IconResult>,
+#[derive(Debug)]
+pub struct SourceResult {
+    pub source: &'static str,
+    pub result: Result<IconResult, Error>,
 }

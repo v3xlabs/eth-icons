@@ -1,8 +1,14 @@
-use crate::{Error, IconClient, IconQuery, IconResult, IconSource};
+use crate::{IconQuery, IconSource};
 
+#[derive(Clone)]
 pub struct Zerion;
 
+#[async_trait::async_trait]
 impl IconSource for Zerion {
+    fn name(&self) -> &'static str {
+        "zerion"
+    }
+
     fn url(&self, query: &IconQuery) -> Option<String> {
         match query {
             IconQuery::ERC20(_network_id, address) => Some(format!(
@@ -11,13 +17,5 @@ impl IconSource for Zerion {
             )),
             _ => None,
         }
-    }
-
-    async fn fetch(&self, client: &IconClient, query: IconQuery) -> Result<IconResult, Error> {
-        let Some(url) = self.url(&query) else {
-            return Ok(IconResult::Unsupported);
-        };
-
-        client.fetch_image_url(&url).await
     }
 }

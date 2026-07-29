@@ -1,9 +1,15 @@
-use crate::{Error, IconClient, IconQuery, IconResult, IconSource};
+use crate::{IconQuery, IconSource};
 
-/// https://tokens.smold.app/ethereum
+/// [source](https://tokens.smold.app/ethereum)
+#[derive(Clone)]
 pub struct Smoldapp;
 
+#[async_trait::async_trait]
 impl IconSource for Smoldapp {
+    fn name(&self) -> &'static str {
+        "smoldapp"
+    }
+
     fn url(&self, query: &IconQuery) -> Option<String> {
         match query {
             IconQuery::Network(network_id) => Some(format!(
@@ -22,13 +28,5 @@ impl IconSource for Smoldapp {
                 address.to_lowercase()
             )),
         }
-    }
-
-    async fn fetch(&self, client: &IconClient, query: IconQuery) -> Result<IconResult, Error> {
-        let Some(url) = self.url(&query) else {
-            return Ok(IconResult::Unsupported);
-        };
-
-        client.fetch_image_url(&url).await
     }
 }

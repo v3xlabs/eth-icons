@@ -1,8 +1,14 @@
-use crate::{Error, IconClient, IconQuery, IconResult, IconSource};
+use crate::{IconQuery, IconSource};
 
+#[derive(Clone)]
 pub struct Avara;
 
+#[async_trait::async_trait]
 impl IconSource for Avara {
+    fn name(&self) -> &'static str {
+        "avara"
+    }
+
     fn url(&self, query: &IconQuery) -> Option<String> {
         match query {
             IconQuery::ERC20(network_id, address) => Some(format!(
@@ -12,13 +18,5 @@ impl IconSource for Avara {
             )),
             _ => None,
         }
-    }
-
-    async fn fetch(&self, client: &IconClient, query: IconQuery) -> Result<IconResult, Error> {
-        let Some(url) = self.url(&query) else {
-            return Ok(IconResult::Unsupported);
-        };
-
-        client.fetch_image_url(&url).await
     }
 }

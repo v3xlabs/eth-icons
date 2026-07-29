@@ -4,10 +4,7 @@ pub mod safewallet;
 pub mod smoldapp;
 pub mod zerion;
 
-pub enum IconSourceId {
-    Avara,
-    Blockscout,
-    Safewallet,
-    Smoldapp,
-    Zerion,
-}
+pub use {
+    avara::Avara, blockscout::Blockscout, safewallet::SafeWallet, smoldapp::Smoldapp,
+    zerion::Zerion,
+};

@@ -1,5 +1,5 @@
 use crate::{
-    Error, IconClient,
+    Error, IconFetcher,
     identity::{Address, NetworkId},
     result::IconResult,
 };
@@ -14,12 +14,16 @@ pub enum IconQuery {
     ERC20(NetworkId, Address),
 }
 
-pub trait IconSource {
+#[async_trait::async_trait]
+pub trait IconSource: Send + Sync {
+    fn name(&self) -> &'static str;
+
     fn url(&self, query: &IconQuery) -> Option<String>;
 
-    fn fetch(
-        &self,
-        client: &IconClient,
-        query: IconQuery,
-    ) -> impl std::future::Future<Output = Result<IconResult, Error>> + Send;
+    async fn fetch(&self, fetcher: &IconFetcher, query: &IconQuery) -> Result<IconResult, Error> {
+        match self.url(query) {
+            Some(url) => fetcher.fetch_image_url(&url).await,
+            None => Ok(IconResult::Unsupported),
+        }
+    }
 }

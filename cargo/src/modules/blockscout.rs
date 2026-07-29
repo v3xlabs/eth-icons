@@ -2,11 +2,17 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-use crate::{Error, IconClient, IconQuery, IconResult, IconSource};
+use crate::{Error, IconFetcher, IconQuery, IconResult, IconSource};
 
+#[derive(Clone)]
 pub struct Blockscout;
 
+#[async_trait::async_trait]
 impl IconSource for Blockscout {
+    fn name(&self) -> &'static str {
+        "blockscout"
+    }
+
     fn url(&self, query: &IconQuery) -> Option<String> {
         match query {
             IconQuery::ERC20(network_id, address) => {
@@ -22,38 +28,26 @@ impl IconSource for Blockscout {
         }
     }
 
-    async fn fetch(&self, client: &IconClient, query: IconQuery) -> Result<IconResult, Error> {
-        let Some(url) = self.url(&query) else {
+    async fn fetch(&self, fetcher: &IconFetcher, query: &IconQuery) -> Result<IconResult, Error> {
+        let Some(url) = self.url(query) else {
             return Ok(IconResult::Unsupported);
         };
 
-        let response = client
-            .client
-            .get(url)
-            .send()
-            .await
-            .map_err(Error::HttpError)?;
-
-        let status = response.status();
-        if !status.is_success() {
-            return Err(Error::HttpError(response.error_for_status().unwrap_err()));
-        }
-
-        let body: BlockscoutAssetMetadata = response.json().await.map_err(Error::HttpError)?;
-        let Some(icon_url) = body.icon_url else {
+        let Some(metadata) = fetcher.fetch_json::<BlockscoutAssetMetadata>(&url).await? else {
             return Ok(IconResult::NotFound);
         };
 
-        client.fetch_image_url(&icon_url).await
+        let Some(icon_url) = metadata.icon_url else {
+            return Ok(IconResult::NotFound);
+        };
+
+        fetcher.fetch_image_url(&icon_url).await
     }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct BlockscoutAssetMetadata {
     pub icon_url: Option<String>,
-    // pub decimals: String,
-    // pub name: String,
-    // pub symbol: String,
     #[serde(flatten)]
-    pub other: HashMap<String, String>,
+    pub other: HashMap<String, serde_json::Value>,
 }

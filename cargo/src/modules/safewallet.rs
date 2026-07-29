@@ -1,8 +1,14 @@
-use crate::{Error, IconClient, IconQuery, IconResult, IconSource};
+use crate::{IconQuery, IconSource};
 
+#[derive(Clone)]
 pub struct SafeWallet;
 
+#[async_trait::async_trait]
 impl IconSource for SafeWallet {
+    fn name(&self) -> &'static str {
+        "safewallet"
+    }
+
     fn url(&self, query: &IconQuery) -> Option<String> {
         match query {
             IconQuery::Network(network_id) => Some(format!(
@@ -15,13 +21,5 @@ impl IconSource for SafeWallet {
             )),
             _ => None,
         }
-    }
-
-    async fn fetch(&self, client: &IconClient, query: IconQuery) -> Result<IconResult, Error> {
-        let Some(url) = self.url(&query) else {
-            return Ok(IconResult::Unsupported);
-        };
-
-        client.fetch_image_url(&url).await
     }
 }
