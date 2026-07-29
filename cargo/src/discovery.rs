@@ -1,7 +1,12 @@
-use crate::identity::{NetworkId, Address};
+use crate::{
+    identity::{Address, NetworkId},
+    IconClient,
+    Icon,
+    Error,
+};
 
 #[derive(Debug, Clone)]
-pub enum DiscoveryQuery {
+pub enum IconQuery {
     // Ethereum Mainnet, Sepolia, etc.
     Network(NetworkId),
     // ETH, sepETH, etc.
@@ -12,14 +17,14 @@ pub enum DiscoveryQuery {
 
 #[derive(Debug, Clone)]
 pub struct DiscoveryResults {
-    pub query: DiscoveryQuery,
-    pub results: Vec<DiscoveryResult>
+    pub query: IconQuery,
+    pub results: Vec<DiscoveryResult>,
 }
 
 #[derive(Debug, Clone)]
 pub struct DiscoveryResult {
-    pub icon: Option<String>,
-    pub metadata: Option<String>
+    pub icon: Option<Icon>,
+    pub metadata: Option<String>,
 }
 
 impl DiscoveryResult {
@@ -28,16 +33,12 @@ impl DiscoveryResult {
     }
 }
 
-#[derive(Debug, thiserror::Error)]
-pub enum DiscoveryError {
-    #[error("Not found")]
-    NotFound,
-    #[error("HTTP error: {0}")]
-    HttpError(reqwest::Error),
-    #[error("Internal error: {0}")]
-    InternalError(String),
-}
-
 pub trait DiscoveryMechanism {
-    fn discover(&self, query: DiscoveryQuery) -> impl std::future::Future<Output = Result<Option<DiscoveryResult>, DiscoveryError>> + Send;
+    fn url(&self, query: &IconQuery) -> Option<String>;
+
+    fn fetch(
+        &self,
+        client: &IconClient,
+        query: IconQuery,
+    ) -> impl std::future::Future<Output = Result<Option<DiscoveryResult>, Error>> + Send;
 }

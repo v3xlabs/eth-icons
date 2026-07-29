@@ -1,0 +1,45 @@
+use crate::{
+    IconClient,
+    discovery::{DiscoveryMechanism, DiscoveryResult},
+    Error, IconQuery,
+};
+
+/// https://tokens.smold.app/ethereum
+pub struct Smoldapp;
+
+impl DiscoveryMechanism for Smoldapp {
+    fn url(&self, query: &IconQuery) -> Option<String> {
+        match query {
+            IconQuery::Network(network_id) => Some(format!(
+                "https://raw.githubusercontent.com/smoldapp/tokenassets/main/chains/{}/logo.svg",
+                network_id
+            )),
+            IconQuery::Native(network_id) => {
+                if *network_id != 1 {
+                    return None;
+                }
+                Some("https://raw.githubusercontent.com/smoldapp/tokenassets/main/tokens/1/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee/logo.svg".to_string())
+            }
+            IconQuery::ERC20(network_id, address) => Some(format!(
+                "https://raw.githubusercontent.com/smoldapp/tokenassets/main/tokens/{}/{}/logo.svg",
+                network_id,
+                address.to_lowercase()
+            )),
+        }
+    }
+
+    async fn fetch(
+        &self,
+        client: &IconClient,
+        query: IconQuery,
+    ) -> Result<Option<DiscoveryResult>, Error> {
+        let url = self.url(&query).ok_or(Error::Unsupported)?;
+
+        let icon = client.fetch(&url).await?;
+
+        Ok(Some(DiscoveryResult {
+            icon: Some(icon),
+            metadata: None,
+        }))
+    }
+}
