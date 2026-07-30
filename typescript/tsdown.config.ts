@@ -1,8 +1,10 @@
 import { defineConfig } from "tsdown";
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import fs from "node:fs";
+import path from "node:path";
 
-const pkg = JSON.parse(readFileSync(resolve(__dirname, "package.json"), "utf-8"));
+const pkg = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, "package.json"), "utf8"),
+);
 
 // eslint-disable-next-line import/no-default-export
 export default defineConfig({
