@@ -1,5 +1,5 @@
 {
-  description = "openlv devshell";
+  description = "eth-icons devshell";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
