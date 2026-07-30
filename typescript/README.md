@@ -102,21 +102,3 @@ import { toBlob, toDataUri } from "eth-icons";
 URL.createObjectURL(toBlob(icon));
 element.src = toDataUri(icon);
 ```
-
-## Adding your own source
-
-A source maps a query to a URL. Return `undefined` for anything it does not serve, and the client
-reports `unsupported` without making a request.
-
-```ts
-import type { IconSource } from "eth-icons";
-
-const mySource: IconSource = {
-  name: "my-source",
-  url: (query) =>
-    query.type === "network" ? `https://example.com/${query.networkId}.png` : undefined,
-};
-```
-
-Add `fetch` when a source needs more than one request — see [blockscout](./src/modules/blockscout.ts),
-which reads token metadata before fetching the image it points at.
