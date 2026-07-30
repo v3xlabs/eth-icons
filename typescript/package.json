@@ -44,6 +44,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@types/node": "^24.0.0",
     "eslint": "^10.8.0",
     "eslint-plugin-v3xlabs": "^1.8.1",
     "tsdown": "^0.22.14",
