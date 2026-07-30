@@ -1,5 +1,5 @@
 {
-  description = "eth-icons — Ethereum asset icon fetching (Rust + TypeScript)";
+  description = "eth-icons devshell";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
