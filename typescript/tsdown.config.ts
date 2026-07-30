@@ -1,8 +1,9 @@
 import { defineConfig } from "tsdown";
+
 import fs from "node:fs";
 import path from "node:path";
 
-const pkg = JSON.parse(
+const package_ = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, "package.json"), "utf8"),
 );
 
@@ -15,9 +16,9 @@ export default defineConfig({
   sourcemap: true,
   banner: {
     js: `/**
- * @license ${pkg.name} v${pkg.version}
- * (c) ${new Date().getFullYear()} ${pkg.author}
- * Released under the ${pkg.license} License.
+ * @license ${package_.name} v${package_.version}
+ * (c) ${new Date().getFullYear()} ${package_.author}
+ * Released under the ${package_.license} License.
  */`,
   },
 });
