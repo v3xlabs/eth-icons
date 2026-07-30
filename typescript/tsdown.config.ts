@@ -1,7 +1,7 @@
-import { defineConfig } from "tsdown";
-
 import fs from "node:fs";
 import path from "node:path";
+
+import { defineConfig } from "tsdown";
 
 const package_ = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, "package.json"), "utf8"),
