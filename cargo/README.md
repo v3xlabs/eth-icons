@@ -28,7 +28,7 @@ cargo add eth-icons
 use eth_icons::{IconClient, IconQuery};
 
 // Create a client
-let client = reqwest::client();
+let client = reqwest::Client::new();
 
 // Create an icon client
 let icons = IconClient::builder()
