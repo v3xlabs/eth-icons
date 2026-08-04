@@ -17,7 +17,7 @@ impl Default for IconFetcher {
     }
 }
 
-impl IconFetcher {    
+impl IconFetcher {
     pub fn new(client: Option<Client>, max_response_bytes: Option<usize>) -> Self {
         Self {
             client: client.unwrap_or_default(),

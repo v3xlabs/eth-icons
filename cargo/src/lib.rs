@@ -61,7 +61,7 @@
  * In order to improve the experience you may want to set sensible limits for fetching icons.
  * You can configure `reqwest::Client` and set a `reqwest::redirect::Policy` aswell as overall max request duration via `.timeout()`.
  * In addition to the above `eth-icons` provides a `.with_max_response_bytes` method which limits the maximum size of an icon.
- * 
+ *
  * By default `reqwest` follows up to 10 redirects.
  *
  * ```rust
