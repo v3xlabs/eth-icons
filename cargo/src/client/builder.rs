@@ -8,6 +8,7 @@ use crate::{
 #[derive(Default)]
 pub struct IconClientBuilder {
     client: Option<reqwest::Client>,
+    max_response_bytes: Option<usize>,
     sources: Vec<Arc<dyn IconSource>>,
 }
 
@@ -18,6 +19,11 @@ impl IconClientBuilder {
 
     pub fn with_reqwest(mut self, client: reqwest::Client) -> Self {
         self.client = Some(client);
+        self
+    }
+
+    pub fn with_max_response_bytes(mut self, max_response_bytes: usize) -> Self {
+        self.max_response_bytes = Some(max_response_bytes);
         self
     }
 
@@ -41,7 +47,7 @@ impl IconClientBuilder {
 
     pub fn build(self) -> IconClient {
         IconClient {
-            fetcher: IconFetcher::new(self.client.unwrap_or_default()),
+            fetcher: IconFetcher::new(self.client, self.max_response_bytes),
             sources: self.sources,
         }
     }

@@ -56,6 +56,33 @@
  * - [Smoldapp](crate::modules::Smoldapp) - supports network, native tokens, and ERC20s
  * - [Zerion](crate::modules::Zerion) - supports ERC20s
  *
+ * ## Request Limits
+ *
+ * In order to improve the experience you may want to set sensible limits for fetching icons.
+ * You can configure `reqwest::Client` and set a `reqwest::redirect::Policy` aswell as overall max request duration via `.timeout()`.
+ * In addition to the above `eth-icons` provides a `.with_max_response_bytes` method which limits the maximum size of an icon.
+ * 
+ * By default `reqwest` follows up to 10 redirects.
+ *
+ * ```rust
+ * use std::time::Duration;
+ * use eth_icons::IconClient;
+ *
+ * # fn main() -> Result<(), Box<dyn std::error::Error>> {
+ * let client = reqwest::Client::builder()
+ *     .redirect(reqwest::redirect::Policy::limited(3))
+ *     .timeout(Duration::from_secs(5))
+ *     .build()?;
+ *
+ * let icons = IconClient::builder()
+ *     .with_reqwest(client)
+ *     .with_max_response_bytes(1_048_576)
+ *     .with_defaults()
+ *     .build();
+ * # let _ = icons;
+ * # Ok(())
+ * # }
+ * ```
  *
  */
 
